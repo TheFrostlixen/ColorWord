@@ -4,6 +4,7 @@
  * Date: 5/21/2015
  */
 using System;
+using System.IO;
 
 namespace ColorWord
 {
@@ -17,23 +18,43 @@ namespace ColorWord
 		
 		public static void Main(string[] args)
 		{
-			Console.Write("Enter a word to detect its equivalent color: ");
-			string word = Console.ReadLine();
-			
-			int[] colorList = new int[ word.Length ];
-			
-			for (int i = 0; i < word.Length; i++)
+			while (true)
 			{
-				if (word[i] >= 'a' && word[i] <= 'z')
-					colorList[i] = GetColorFromwavelength( getwavelength( word[i] ) );
+				// User input stage
+				Console.Write("Enter a message to compute its equivalent color: ");
+				string word = Console.ReadLine();
+				
+				// Begin color/letter processing
+				int[] colorList = new int[ word.Length ];
+				
+				for (int i = 0; i < word.Length; i++)
+				{
+					if (word[i] >= 'a' && word[i] <= 'z')
+						colorList[i] = GetColorFromwavelength( getwavelength( word[i] ) );
+				}
+				
+				// Compute and display results
+				int avg = averageColors( colorList );
+				int sqr = squaredColors( colorList );
+				Console.WriteLine( "Average: " + avg.ToString("X") );
+				Console.WriteLine( "Square Root: " + sqr.ToString("X") );
+				
+				// Visually display in HTML
+				Console.Write("Generate HTML? ");
+				char y = (char)Console.ReadLine()[0];
+				if (y == 'y' || y == 'Y')
+				    DisplayHtml( word, avg.ToString("X") );
+				
+				// Wait for exit
+				Console.WriteLine();
 			}
-			
-			Console.WriteLine( "Average: " + averageColors( colorList ).ToString("X") );
-			Console.WriteLine( "Square Root: " + squaredColors( colorList ).ToString("X") );
-			
-			Console.ReadKey();
 		}
 		
+		/// <summary>
+		/// Computes the 'average' of each letters calculated color for the message.
+		/// </summary>
+		/// <param name="list">list of all calculated colors</param>
+		/// <returns>resultant message color</returns>
 		public static int averageColors( int[] list )
 		{
 			int total = 0;
@@ -44,6 +65,11 @@ namespace ColorWord
 			return total / list.Length;
 		}
 		
+		/// <summary>
+		/// Computes the 'square' of the colors calculated for the message.
+		/// </summary>
+		/// <param name="list">list of all calculated colors</param>
+		/// <returns>resultant message color</returns>
 		public static int squaredColors( int[] list )
 		{
 			long total = 0;
@@ -54,11 +80,20 @@ namespace ColorWord
 			return (int)Math.Floor( Math.Sqrt( total ) );
 		}
 		
+		/// <summary>
+		/// Calculates the corresponding wavelength (based on the visible spectrum) for a given letter.
+		/// </summary>
+		/// <returns>wavelength as a double</returns>
 		public static double getwavelength( char letter )
 		{
 			return _ULTRAVIOLET + (double)Math.Floor( (letter - 'a') * (_INFRARED - _ULTRAVIOLET) / 26.0 );
 		}
 		
+		/// <summary>
+		/// Calculates an RGB color from a given wavelength of light.
+		/// </summary>
+		/// <param name="wavelength">Light wavelenght (in nm)</param>
+		/// <returns>RGB color value</returns>
 		public static int GetColorFromwavelength( double wavelength )
 		{
 			double factor;
@@ -128,5 +163,16 @@ namespace ColorWord
 			//return Color.FromArgb( 0, rgb[0], rgb[1], rgb[2] ).ToArgb();
 		}
 		
+		/// <summary>
+		/// Builds the simplest html page to display the averaged color
+		/// </summary>
+		/// <param name="msg">The </param>
+		/// <param name="color">RGB color value, formatted as hex value.</param>
+		public static void DisplayHtml( string msg, string color )
+		{
+			string filename = msg + ".html";
+			File.WriteAllText( filename, String.Format( "<body bgcolor=\"#{0}\">{1}</body>", color, msg ) );
+			System.Diagnostics.Process.Start( filename );
+		}
 	}
 }
