@@ -36,14 +36,14 @@ namespace ColorWord
 				// Compute and display results
 				int avg = averageColors( colorList );
 				int sqr = squaredColors( colorList );
-				Console.WriteLine( "Average: " + avg.ToString("X") );
+				Console.WriteLine( "Average: " + avg.ToString("X") ); // format string as hex
 				Console.WriteLine( "Square Root: " + sqr.ToString("X") );
 				
 				// Visually display in HTML
 				Console.Write("Generate HTML? ");
 				char y = (char)Console.ReadLine()[0];
 				if (y == 'y' || y == 'Y')
-				    DisplayHtml( word, avg.ToString("X") );
+				    DisplayHtml( word, avg.ToString("X"), sqr.ToString("X") );
 				
 				// Wait for exit
 				Console.WriteLine();
@@ -77,7 +77,8 @@ namespace ColorWord
 			{
 				total += (long)Math.Pow( i, 2 );
 			}
-			return (int)Math.Floor( Math.Sqrt( total ) );
+            int result = (int)Math.Floor( Math.Sqrt(total) );
+            return (result > 0x1000000) ? result % 0x1000000 : result; // color correction, prevents color from exceeding possible bounds
 		}
 		
 		/// <summary>
@@ -160,18 +161,20 @@ namespace ColorWord
 			
 			// combine into one int and return it
 			return (0 << 24) | (rgb[0] << 16) | (rgb[1] << 8) | rgb[2];
-			//return Color.FromArgb( 0, rgb[0], rgb[1], rgb[2] ).ToArgb();
 		}
 		
 		/// <summary>
 		/// Builds the simplest html page to display the averaged color
 		/// </summary>
-		/// <param name="msg">The </param>
-		/// <param name="color">RGB color value, formatted as hex value.</param>
-		public static void DisplayHtml( string msg, string color )
+        /// <param name="msg">The </param>
+        /// <param name="color1">RGB average color, formatted as hex.</param>
+        /// <param name="color2">RGB squared color, formatted as hex.</param>
+		public static void DisplayHtml( string msg, string color1, string color2 )
 		{
 			string filename = msg + ".html";
-			File.WriteAllText( filename, String.Format( "<body bgcolor=\"#{0}\">{1}</body>", color, msg ) );
+            string html = "<style type=\"text/css\">#top, #bottom {{ position: fixed; left: 0; right: 0; height: 50%;}}#top {{ top: 0; background-color:#{1};}}#bottom {{ bottom: 0; background-color:#{2};}}</style><div id=\"top\">{0}</div><div id=\"bottom\">{0}</div>";
+			html = String.Format( html, msg, color1, color2 );
+            File.WriteAllText( filename, html );
 			System.Diagnostics.Process.Start( filename );
 		}
 	}
