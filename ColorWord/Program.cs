@@ -29,8 +29,8 @@ namespace ColorWord
 				
 				for (int i = 0; i < word.Length; i++)
 				{
-					if (word[i] >= 'a' && word[i] <= 'z')
-						colorList[i] = GetColorFromwavelength( getwavelength( word[i] ) );
+					if ( char.ToLower(word[i]) >= 'a' && char.ToLower(word[i]) <= 'z') // check if between a-z & adjust for caps
+						colorList[i] = GetColorFromwavelength( getwavelength( char.ToLower(word[i]) ) );
 				}
 				
 				// Compute and display results
@@ -43,7 +43,7 @@ namespace ColorWord
 				Console.Write("Generate HTML? ");
 				char y = (char)Console.ReadLine()[0];
 				if (y == 'y' || y == 'Y')
-				    DisplayHtml( word, avg.ToString("X"), sqr.ToString("X") );
+					DisplayHtml( word.ToLower(), avg.ToString("X"), sqr.ToString("X") );
 				
 				// Wait for exit
 				Console.WriteLine();
