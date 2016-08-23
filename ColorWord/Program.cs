@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ColorWord
  * Author: Matt Fredrickson
  * Date: 5/21/2015
@@ -77,8 +77,8 @@ namespace ColorWord
 			{
 				total += (long)Math.Pow( i, 2 );
 			}
-            int result = (int)Math.Floor( Math.Sqrt(total) );
-            return (result > 0x1000000) ? result % 0x1000000 : result; // color correction, prevents color from exceeding possible bounds
+			int result = (int)Math.Floor( Math.Sqrt(total) );
+			return (result > 0x1000000) ? result % 0x1000000 : result; // color correction, prevents color from exceeding possible bounds
 		}
 		
 		/// <summary>
@@ -166,15 +166,15 @@ namespace ColorWord
 		/// <summary>
 		/// Builds the simplest html page to display the averaged color
 		/// </summary>
-        /// <param name="msg">The </param>
-        /// <param name="color1">RGB average color, formatted as hex.</param>
-        /// <param name="color2">RGB squared color, formatted as hex.</param>
+		/// <param name="msg">The </param>
+		/// <param name="color1">RGB average color, formatted as hex.</param>
+		/// <param name="color2">RGB squared color, formatted as hex.</param>
 		public static void DisplayHtml( string msg, string color1, string color2 )
 		{
 			string filename = msg + ".html";
-            string html = "<style type=\"text/css\">#top, #bottom {{ position: fixed; left: 0; right: 0; height: 50%;}}#top {{ top: 0; background-color:#{1};}}#bottom {{ bottom: 0; background-color:#{2};}}</style><div id=\"top\">{0}</div><div id=\"bottom\">{0}</div>";
+			string html = "<style type=\"text/css\">#top, #bottom {{ position: fixed; left: 0; right: 0; height: 50%;}}#top {{ top: 0; background-color:#{1};}}#bottom {{ bottom: 0; background-color:#{2};}}</style><div id=\"top\">{0}</div><div id=\"bottom\">{0}</div>";
 			html = String.Format( html, msg, color1, color2 );
-            File.WriteAllText( filename, html );
+			File.WriteAllText( filename, html );
 			System.Diagnostics.Process.Start( filename );
 		}
 	}
